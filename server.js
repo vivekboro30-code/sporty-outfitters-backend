@@ -4,6 +4,10 @@
 // Load environment variables from .env file (like MONGO_URI, PORT)
 require('dotenv').config();
 
+const multer = require('multer');
+const { v2: cloudinary } = require('cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
 // Express: framework for building the web server and API routes
 const express = require('express');
 
@@ -40,6 +44,22 @@ app.use(cors());
 // Allows Express to automatically parse incoming JSON request bodies
 // (e.g., when your frontend sends { title, price } in a POST/PUT request)
 app.use(express.json());
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'sporty-outfitters-products',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
+    }
+});
+
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 
 // ============================================
@@ -92,7 +112,12 @@ app.post('/api/products', verifyToken, async (req, res) => {
         res.status(400).json({ error: err.message }); // 400 = bad request (e.g. missing required field)
     }
 });
-
+app.post('/api/upload', verifyToken, upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+    res.status(200).json({ url: req.file.path });
+});
 
 // --- DELETE: remove a product by ID (protected — requires a valid login token) ---
 // :id in the URL is a route parameter — e.g. /api/products/6a44fdb...

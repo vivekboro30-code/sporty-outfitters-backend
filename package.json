@@ -11,10 +11,13 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "cloudinary": "^1.41.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.3"
+    "mongoose": "^9.7.3",
+    "multer": "^2.2.0",
+    "multer-storage-cloudinary": "^4.0.0"
   }
 }

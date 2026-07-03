@@ -9,10 +9,13 @@ const productSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
-  // You might want to change this to 'price' for a store!
   price: {
     type: Number,
     required: true
+  },
+  image: {
+    type: String,
+    default: ''
   },
   createdAt: {
     type: Date,
@@ -20,5 +23,4 @@ const productSchema = new mongoose.Schema({
   }
 });
 
-// Rename 'Task' to 'Product'
 module.exports = mongoose.model('Product', productSchema);
